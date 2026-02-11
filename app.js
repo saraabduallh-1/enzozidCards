@@ -62,9 +62,10 @@ const TEMPLATES = {
     src: "./assets/4.png",
     width: 1080,
     height: 1350,
-    textBox: { x: 540, y: 860, maxWidth: 820 },
+    textBox: { x: 540, y: 840, maxWidth: 820 },
     baseFontSize: 30,
-    color: "#4286C3"
+    color: "#4286C3",
+    lineHeight: .5
   }
 };
 // ====== 3) تحميل صورة القالب ======
@@ -192,13 +193,17 @@ function draw() {
   
 
   // ارسم الاسم
-  ctx.fillText(name, cfg.textBox.x, cfg.textBox.y);
-  // رجع الظل للوضع الطبيعي
-  ctx.shadowColor = "transparent";
-  ctx.shadowBlur = 0;
-  ctx.shadowOffsetY = 0;
-}
 
+const lines = name.split("\n"); // يفصل السطور
+
+const lineHeight = 60; // المسافة بين السطرين (عدّليها حسب القالب)
+
+lines.slice(0, 2).forEach((line, index) => {
+  ctx.fillText(line.trim(), cfg.textBox.x, cfg.textBox.y + (index * lineHeight));
+});
+
+
+}
 // ====== 6) تحميل  ======
 
 downloadBtn.addEventListener("click", async () => {
