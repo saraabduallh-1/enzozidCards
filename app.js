@@ -10,8 +10,9 @@ const ctx = canvas.getContext("2d");
 
 const templateSelect = document.getElementById("templateSelect");
 const nameInput = document.getElementById("nameInput");
-// ✅ عرض قالب افتراضي أول ما تفتح الصفحة
+//  عرض قالب افتراضي أول ما تفتح الصفحة
 const defaultTemplateKey = templateSelect.value;
+
 
 loadTemplate(defaultTemplateKey).then(() => {
   // ضبط مقاس الكانفس على مقاس القالب
@@ -25,7 +26,7 @@ const downloadBtn = document.getElementById("downloadBtn");
 const copyLinkBtn = document.getElementById("copyLinkBtn");
 const statusEl = document.getElementById("status");
 
-// ====== 2) إعدادات القوالب (عدّلي مكان الاسم هنا) ======
+// ====== 2) إعدادات القوالب  ======
 // x,y = مكان الاسم في القالب
 // maxWidth = أقصى عرض للاسم (إذا زاد يصغّر حجم الخط تلقائيًا)
 // baseFontSize = حجم الخط الافتراضي قبل التصغير
@@ -212,7 +213,7 @@ downloadBtn.addEventListener("click", async () => {
 
   const file = new File([blob], "التهنئة.png", { type: "image/png" });
 
-  // 🔹 أولاً: افتح الشير (الأضمن)
+  //  أولاً: افتح الشير 
   if (navigator.share && (!navigator.canShare || navigator.canShare({ files: [file] }))) {
     try {
       await navigator.share({
@@ -223,7 +224,7 @@ downloadBtn.addEventListener("click", async () => {
     } catch (e) {}
   }
 
-  // 🔹 إذا ما يدعم الشير → تحميل عادي
+  //  إذا ما يدعم الشير → تحميل عادي
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
@@ -239,30 +240,16 @@ downloadBtn.addEventListener("click", async () => {
  * يقدر العميل يفتحه وتجيه نفس الإعدادات
  */
 async function copySmartLink() {
-  const t = templateSelect.value;
-  const name = safeName(nameInput.value);
-  const align = "center";
-
-  const p = new URLSearchParams();
-  p.set("t", t);
-  if (name) p.set("name", name);
-  p.set("align", align);
-
-  const longUrl = `${window.location.origin}${window.location.pathname}?${p.toString()}`;
+  const fixedUrl = "https://enzozid-cards2026.vercel.app/";
 
   try {
-    // ✨ اختصار الرابط باستخدام TinyURL
-    const res = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(longUrl)}`);
-    const shortUrl = await res.text();
-
-    await navigator.clipboard.writeText(shortUrl);
-    statusEl.textContent = " تم نسخ الرابط المختصر";
-  } catch (err) {
-    // fallback إذا فشل الاختصار
-    await navigator.clipboard.writeText(longUrl);
-    statusEl.textContent = "تم نسخ الرابط";
+    await navigator.clipboard.writeText(fixedUrl);
+    statusEl.textContent = " تم نسخ الرابط";
+  } catch {
+    statusEl.textContent = "انسخ الرابط يدويًا من شريط العنوان بالأعلى";
   }
 }
+
 
 // ====== 8) مزامنة الرابط مع أي تغيير ======
 function syncUrl() {
@@ -274,25 +261,6 @@ function syncUrl() {
 }
 
 
-// ====== 9) تشغيل أولي (Init) ======
-async function init() {
-  // اقرأ باراميترات الرابط (لو أحد فتح رابط ذكي)
-  const params = getUrlParams();
-
-  // طبق القيم إذا موجودة وصحيحة
-  if (params.t && TEMPLATES[params.t]) templateSelect.value = params.t;
-  if (params.name) nameInput.value = params.name;
-  if (params.align) alignSelect.value = params.align;
-
-  
-  // حمّل القالب المختار وارسم
-  resizeCanvas(templateSelect.value);
-  await loadTemplate(templateSelect.value);
-  draw();
-
-  // حدّث الرابط بحيث يعكس الحالة الحالية
-  syncUrl();
-}
 
 // ====== 10) أحداث المستخدم (Event Listeners) ======
 templateSelect.addEventListener("change", async () => {
