@@ -223,7 +223,7 @@ downloadBtn.addEventListener("click", async () => {
     try {
       await navigator.share({
         files: [file],
-        title: "التهنئة.png",
+        title: "تهنئة",
       });
       return;
     } catch (e) {}
